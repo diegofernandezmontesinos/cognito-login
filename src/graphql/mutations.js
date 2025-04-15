@@ -11,6 +11,7 @@ export const createRoute = /* GraphQL */ `
       title
       description
       createdAt
+      owner
       updatedAt
       __typename
     }
@@ -26,6 +27,7 @@ export const updateRoute = /* GraphQL */ `
       title
       description
       createdAt
+      owner
       updatedAt
       __typename
     }
@@ -41,6 +43,7 @@ export const deleteRoute = /* GraphQL */ `
       title
       description
       createdAt
+      owner
       updatedAt
       __typename
     }

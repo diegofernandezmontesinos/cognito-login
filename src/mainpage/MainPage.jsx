@@ -2,58 +2,92 @@
 
 import React, { useEffect, useState } from "react";
 import { generateClient } from "aws-amplify/api";
-import { listRoutes } from "../graphql/queries"; // Asegúrate de que la ruta sea correcta
-import "../App.css"; // Si tienes estilos, inclúyelos aquí
 import { createRoute } from "../graphql/mutations";
+import { routesByOwner } from "../graphql/queries";
+import { fetchAuthSession } from "aws-amplify/auth";
+import "../App.css";
 
 const client = generateClient();
 
 const MainPage = () => {
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [newRoute, setNewRoute] = useState({ title: "", description: "" });
+  const [formState, setFormState] = useState({ title: "", description: "" });
+
+  const handleChange = (e) => {
+    setFormState((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const fetchRoutes = async () => {
+    try {
+      const session = await fetchAuthSession();
+      const userSub = session.tokens?.idToken?.payload["sub"];
+
+      const response = await client.graphql({
+        query: routesByOwner,
+        variables: {
+          owner: userSub,
+          sortDirection: "DESC",
+        },
+      });
+      console.log("Response completa:", JSON.stringify(response, null, 2));
+
+      setRoutes(response.data.routesByOwner.items);
+    } catch (error) {
+      console.error("Error fetching routes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRoutes = async () => {
-      try {
-        const response = await client.graphql({
-          query: listRoutes,
-        });
-
-        setRoutes(response.data.listRoutes.items);
-      } catch (error) {
-        console.error("Error fetching routes:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRoutes();
   }, []);
 
-  const handleCreateRoute = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const { title, description } = formState;
+
+    if (!title || !description) return alert("Rellena todos los campos");
+
     try {
-      const response = await client.graphql({
+      await client.graphql({
         query: createRoute,
         variables: {
           input: {
-            title: newRoute.title,
-            description: newRoute.description,
+            title,
+            description,
           },
         },
       });
 
-      // Añadir nueva ruta a la lista sin necesidad de refetch
-      setRoutes([...routes, response.data.createRoute]);
-      setNewRoute({ title: "", description: "" });
-    } catch (err) {
-      console.error("Error creating route:", err);
+      setFormState({ title: "", description: "" });
+      fetchRoutes(); // refrescar la lista
+    } catch (error) {
+      console.error("Error creando ruta:", error);
     }
   };
+
   return (
     <div className="main-container">
       <h1>Lista de Rutas</h1>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          name="title"
+          value={formState.title}
+          onChange={handleChange}
+          placeholder="Título"
+        />
+        <input
+          name="description"
+          value={formState.description}
+          onChange={handleChange}
+          placeholder="Descripción"
+        />
+        <button type="submit">Crear Ruta</button>
+      </form>
+
       {loading ? (
         <p>Cargando rutas...</p>
       ) : (
@@ -62,28 +96,11 @@ const MainPage = () => {
             <li key={route.id}>
               <h3>{route.title}</h3>
               <p>{route.description}</p>
+              <p><small>Creado: {new Date(route.createdAt).toLocaleString()}</small></p>
             </li>
           ))}
         </ul>
       )}
-      <form onSubmit={handleCreateRoute} className="form-crear-ruta">
-        <input
-          type="text"
-          placeholder="Título"
-          value={newRoute.title}
-          onChange={(e) => setNewRoute({ ...newRoute, title: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Descripción"
-          value={newRoute.description}
-          onChange={(e) =>
-            setNewRoute({ ...newRoute, description: e.target.value })
-          }
-        />
-        <button type="submit">Crear Ruta</button>
-      </form>
     </div>
   );
 };

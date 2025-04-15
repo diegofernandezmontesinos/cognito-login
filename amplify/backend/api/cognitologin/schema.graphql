@@ -1,10 +1,7 @@
-# This "input" configures a global authorization rule to enable public access to
-# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
-input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
-
-type Route @model {
-  id: ID!
+type Route @model @auth(rules: [{ allow: owner, operations: [create, read, update, delete] }]) {
+  id: ID! @primaryKey
   title: String!
   description: String
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
+  owner: String! @index(name: "byOwner", queryField: "routesByOwner")
 }

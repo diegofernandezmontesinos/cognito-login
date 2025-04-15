@@ -1,5 +1,11 @@
 {
   "AppSyncApiName": "cognitologin",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authcognitologin91135f79",
+      "Outputs.UserPoolId"
+    ]
+  }
 }

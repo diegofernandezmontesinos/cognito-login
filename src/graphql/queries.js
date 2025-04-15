@@ -8,6 +8,7 @@ export const getRoute = /* GraphQL */ `
       title
       description
       createdAt
+      owner
       updatedAt
       __typename
     }
@@ -15,16 +16,54 @@ export const getRoute = /* GraphQL */ `
 `;
 export const listRoutes = /* GraphQL */ `
   query ListRoutes(
+    $id: ID
     $filter: ModelRouteFilterInput
     $limit: Int
     $nextToken: String
+    $sortDirection: ModelSortDirection
   ) {
-    listRoutes(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listRoutes(
+      id: $id
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
       items {
         id
         title
         description
         createdAt
+        owner
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const routesByOwner = /* GraphQL */ `
+  query RoutesByOwner(
+    $owner: String!
+    $sortDirection: ModelSortDirection
+    $filter: ModelRouteFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    routesByOwner(
+      owner: $owner
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        title
+        description
+        createdAt
+        owner
         updatedAt
         __typename
       }
