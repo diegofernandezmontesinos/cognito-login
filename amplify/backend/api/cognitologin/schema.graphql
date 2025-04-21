@@ -1,6 +1,6 @@
 type Route @model @auth(rules: [{ allow: owner, operations: [create, read, update, delete] }]) {
   id: ID! @primaryKey
-  title: String!
+  title: String
   description: String
   createdAt: AWSDateTime!
   owner: String! @index(name: "byOwner", queryField: "routesByOwner")
