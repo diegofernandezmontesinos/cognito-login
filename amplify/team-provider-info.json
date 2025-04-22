@@ -1,19 +1,19 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-cognitologin-dev-50e8f-authRole",
-      "UnauthRoleArn": "arn:aws:iam::908204759244:role/amplify-cognitologin-dev-50e8f-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::908204759244:role/amplify-cognitologin-dev-50e8f-authRole",
+      "AuthRoleName": "amplify-cognitologin-dev-0221b-authRole",
+      "UnauthRoleArn": "arn:aws:iam::908204759244:role/amplify-cognitologin-dev-0221b-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::908204759244:role/amplify-cognitologin-dev-0221b-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-cognitologin-dev-50e8f-deployment",
-      "UnauthRoleName": "amplify-cognitologin-dev-50e8f-unauthRole",
-      "StackName": "amplify-cognitologin-dev-50e8f",
-      "StackId": "arn:aws:cloudformation:us-east-2:908204759244:stack/amplify-cognitologin-dev-50e8f/ce7b4d00-17d7-11f0-9962-068342a06173",
-      "AmplifyAppId": "d9w9e34we5fsg"
+      "DeploymentBucketName": "amplify-cognitologin-dev-0221b-deployment",
+      "UnauthRoleName": "amplify-cognitologin-dev-0221b-unauthRole",
+      "StackName": "amplify-cognitologin-dev-0221b",
+      "StackId": "arn:aws:cloudformation:us-east-2:908204759244:stack/amplify-cognitologin-dev-0221b/b6a6df60-1fb0-11f0-89ef-0a596e053775",
+      "AmplifyAppId": "d39lw8uak0gl9x"
     },
     "categories": {
       "auth": {
-        "cognitologin91135f79": {}
+        "cognitologin53f7c69e": {}
       },
       "api": {
         "cognitologin": {}

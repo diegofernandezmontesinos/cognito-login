@@ -1,25 +1,10 @@
 {
   "api": {
     "cognitologin": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "UserPoolId"
-          ],
-          "category": "auth",
-          "resourceName": "cognitologin91135f79"
-        }
-      ],
+      "dependsOn": [],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-              "userPoolConfig": {
-                "userPoolId": "authcognitologin91135f79"
-              }
-            }
-          ],
+          "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "apiKeyConfig": {
               "apiKeyExpirationDays": 7
@@ -33,7 +18,7 @@
     }
   },
   "auth": {
-    "cognitologin91135f79": {
+    "cognitologin53f7c69e": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {

@@ -1,49 +1,46 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createRoute = /* GraphQL */ `
-  mutation CreateRoute(
-    $input: CreateRouteInput!
-    $condition: ModelRouteConditionInput
+export const createTodo = /* GraphQL */ `
+  mutation CreateTodo(
+    $input: CreateTodoInput!
+    $condition: ModelTodoConditionInput
   ) {
-    createRoute(input: $input, condition: $condition) {
+    createTodo(input: $input, condition: $condition) {
       id
-      title
+      name
       description
       createdAt
-      owner
       updatedAt
       __typename
     }
   }
 `;
-export const updateRoute = /* GraphQL */ `
-  mutation UpdateRoute(
-    $input: UpdateRouteInput!
-    $condition: ModelRouteConditionInput
+export const updateTodo = /* GraphQL */ `
+  mutation UpdateTodo(
+    $input: UpdateTodoInput!
+    $condition: ModelTodoConditionInput
   ) {
-    updateRoute(input: $input, condition: $condition) {
+    updateTodo(input: $input, condition: $condition) {
       id
-      title
+      name
       description
       createdAt
-      owner
       updatedAt
       __typename
     }
   }
 `;
-export const deleteRoute = /* GraphQL */ `
-  mutation DeleteRoute(
-    $input: DeleteRouteInput!
-    $condition: ModelRouteConditionInput
+export const deleteTodo = /* GraphQL */ `
+  mutation DeleteTodo(
+    $input: DeleteTodoInput!
+    $condition: ModelTodoConditionInput
   ) {
-    deleteRoute(input: $input, condition: $condition) {
+    deleteTodo(input: $input, condition: $condition) {
       id
-      title
+      name
       description
       createdAt
-      owner
       updatedAt
       __typename
     }

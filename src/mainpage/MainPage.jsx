@@ -1,119 +1,129 @@
 import React, { useEffect, useState } from "react";
 import { generateClient } from "aws-amplify/api";
 import * as mutations from "../graphql/mutations";
-import { routesByOwner } from "../graphql/queries";
-import { fetchAuthSession } from "aws-amplify/auth";
-
-const session = await fetchAuthSession();
-const sourceName = "amplifyTest";
-const userSub = session.tokens?.idToken?.payload["sub"];
+import { listTodos } from "../graphql/queries"; // Cambié "listRoutes" a "listTodos"
+// import { Auth } from "aws-amplify";
 
 const client = generateClient();
-const MainPage = () => {
-  const [routes, setRoutes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [formState, setFormState] = useState({ title: "", description: "" });
-  const [editingRouteId, setEditingRouteId] = useState(null);
 
-  const handleChange = (e) => {
-    setFormState((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+// Función para obtener el ID Token de Cognito
+const getAuthToken = async () => {
+  try {
+    //const session = await Auth.currentSession(); // Obtiene la sesión activa
+    //return session.getIdToken().getJwtToken(); // Obtiene el ID Token
+  } catch (error) {
+    console.error("Error fetching auth token:", error);
+    throw error;
+  }
+};
+
+const MainPage = () => {
+  const [todos, setTodos] = useState([]); // Cambié "routes" a "todos"
+  const [loading, setLoading] = useState(true);
+  const [formState, setFormState] = useState({ name: "", description: "" }); // Cambié "title" a "name"
+  const [editingTodoId, setEditingTodoId] = useState(null); // Cambié "editingRouteId" a "editingTodoId"
+
+  const handleChange = ({ target: { name, value } }) => {
+    setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
-  const fetchRoutes = async () => {
+  const resetForm = () => {
+    setFormState({ name: "", description: "" });
+    setEditingTodoId(null);
+  };
+
+  const fetchTodos = async () => {
+    setLoading(true);
     try {
-      let session2 = await fetchAuthSession();
-      let userSub = session2.tokens?.idToken?.payload["sub"];
-;
+      const authToken = await getAuthToken(); // Obtener el token de autenticación
+
       const response = await client.graphql({
-        query: routesByOwner,
-        variables: {
-          owner: userSub,
-          sortDirection: "DESC",
+        query: listTodos,
+        headers: {
+          Authorization: authToken, // Incluir el token en los headers
         },
       });
 
-      setRoutes(response.data.routesByOwner.items);
+      setTodos(response.data.listTodos.items); // Cambié "listRoutes" a "listTodos"
     } catch (error) {
-      console.error("Error fetching routes:", error);
+      console.error("Error fetching todos:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchRoutes();
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { title, description } = formState;
+    const { name, description } = formState;
 
-    if (!title || !description) return alert("Rellena todos los campos");
+    if (!name || !description) {
+      alert("Rellena todos los campos");
+      return;
+    }
+
+    const input = {
+      name, // Cambié "title" a "name"
+      description,
+      ...(editingTodoId && { id: editingTodoId }), // Cambié "editingRouteId" a "editingTodoId"
+    };
+
+    const mutation = editingTodoId
+      ? mutations.updateTodo // Cambié "updateRoute" a "updateTodo"
+      : mutations.createTodo; // Cambié "createRoute" a "createTodo"
 
     try {
-      if (editingRouteId) {
-        await client.graphql({
-          query: mutations.updateRoute,
-          variables: {
-            input: {
-              id: editingRouteId,
-              title,
-              description,
-            },
-          },
-        });
-        setEditingRouteId(null);
-      } else {
-        await client.graphql({
-          query: mutations.createRoute,
-          variables: {
-            input: {
-              title: formState.title,
-              description: formState.description,
-              createdAt: new Date().toISOString(),
-              owner: userSub,
-              sourceName: sourceName,
-            },
-          },
-        });
-      }
+      const authToken = await getAuthToken(); // Obtener el token de autenticación
 
-      setFormState({ title: "", description: "" });
-      fetchRoutes();
+      await client.graphql({
+        query: mutation,
+        variables: { input },
+        headers: {
+          Authorization: authToken, // Incluir el token en los headers
+        },
+      });
+
+      resetForm();
+      fetchTodos(); // Cambié "fetchRoutes" a "fetchTodos"
     } catch (error) {
-      console.error("Error al guardar la ruta:", error);
+      console.error("Error al guardar el todo:", error);
     }
   };
 
-  const handleEdit = (route) => {
-    setFormState({ title: route.title, description: route.description });
-    setEditingRouteId(route.id);
+  const handleEdit = (todo) => {
+    // Cambié "route" a "todo"
+    setFormState({ name: todo.name, description: todo.description });
+    setEditingTodoId(todo.id); // Cambié "route.id" a "todo.id"
   };
 
   const handleDelete = async (id) => {
     try {
+      const authToken = await getAuthToken(); // Obtener el token de autenticación
+
       await client.graphql({
-        query: mutations.deleteRoute,
-        variables: {
-          input: {
-            id,
-          },
+        query: mutations.deleteTodo, // Cambié "deleteRoute" a "deleteTodo"
+        variables: { input: { id } },
+        headers: {
+          Authorization: authToken, // Incluir el token en los headers
         },
       });
-      fetchRoutes();
+
+      fetchTodos(); // Cambié "fetchRoutes" a "fetchTodos"
     } catch (error) {
-      console.error("Error al eliminar la ruta:", error);
+      console.error("Error al eliminar el todo:", error);
     }
   };
 
+  useEffect(() => {
+    fetchTodos(); // Cambié "fetchRoutes" a "fetchTodos"
+  }, []);
+
   return (
     <div className="main-container">
-      <h1>Lista de Rutas</h1>
-
+      <h1>Lista de Tareas</h1> {/* Cambié "Rutas" a "Tareas" */}
       <form onSubmit={handleSubmit}>
         <input
-          name="title"
-          value={formState.title}
+          name="name" // Cambié "title" a "name"
+          value={formState.name}
           onChange={handleChange}
           placeholder="Título"
         />
@@ -124,27 +134,29 @@ const MainPage = () => {
           placeholder="Descripción"
         />
         <button type="submit">
-          {editingRouteId ? "Actualizar Ruta" : "Crear Ruta"}
+          {editingTodoId ? "Actualizar Tarea" : "Crear Tarea"}
         </button>
       </form>
-
       {loading ? (
-        <p>Cargando rutas...</p>
+        <p>Cargando tareas...</p>
       ) : (
         <ul>
-          {routes.map((route) => (
-            <li key={route.id}>
-              <h3>{route.title}</h3>
-              <p>{route.description}</p>
-              <p>
-                <small>
-                  Creado: {new Date(route.createdAt).toLocaleString()}
-                </small>
-              </p>
-              <button onClick={() => handleEdit(route)}>Editar</button>
-              <button onClick={() => handleDelete(route.id)}>Eliminar</button>
-            </li>
-          ))}
+          {todos.map(
+            (
+              todo // Cambié "routes" a "todos"
+            ) => (
+              <li key={todo.id}>
+                <h3>{todo.name}</h3> {/* Cambié "route.title" a "todo.name" */}
+                <p>{todo.description}</p>
+                <button onClick={() => handleEdit(todo)}>Editar</button>{" "}
+                {/* Cambié "route" a "todo" */}
+                <button onClick={() => handleDelete(todo.id)}>
+                  Eliminar
+                </button>{" "}
+                {/* Cambié "route.id" a "todo.id" */}
+              </li>
+            )
+          )}
         </ul>
       )}
     </div>

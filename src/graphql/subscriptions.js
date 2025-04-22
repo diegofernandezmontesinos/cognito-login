@@ -1,49 +1,37 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateRoute = /* GraphQL */ `
-  subscription OnCreateRoute(
-    $filter: ModelSubscriptionRouteFilterInput
-    $owner: String
-  ) {
-    onCreateRoute(filter: $filter, owner: $owner) {
+export const onCreateTodo = /* GraphQL */ `
+  subscription OnCreateTodo($filter: ModelSubscriptionTodoFilterInput) {
+    onCreateTodo(filter: $filter) {
       id
-      title
+      name
       description
       createdAt
-      owner
       updatedAt
       __typename
     }
   }
 `;
-export const onUpdateRoute = /* GraphQL */ `
-  subscription OnUpdateRoute(
-    $filter: ModelSubscriptionRouteFilterInput
-    $owner: String
-  ) {
-    onUpdateRoute(filter: $filter, owner: $owner) {
+export const onUpdateTodo = /* GraphQL */ `
+  subscription OnUpdateTodo($filter: ModelSubscriptionTodoFilterInput) {
+    onUpdateTodo(filter: $filter) {
       id
-      title
+      name
       description
       createdAt
-      owner
       updatedAt
       __typename
     }
   }
 `;
-export const onDeleteRoute = /* GraphQL */ `
-  subscription OnDeleteRoute(
-    $filter: ModelSubscriptionRouteFilterInput
-    $owner: String
-  ) {
-    onDeleteRoute(filter: $filter, owner: $owner) {
+export const onDeleteTodo = /* GraphQL */ `
+  subscription OnDeleteTodo($filter: ModelSubscriptionTodoFilterInput) {
+    onDeleteTodo(filter: $filter) {
       id
-      title
+      name
       description
       createdAt
-      owner
       updatedAt
       __typename
     }
